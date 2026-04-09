@@ -1,6 +1,6 @@
 import { useGetStaffDailySummary } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { UtensilsCrossed, TrendingUp, Clock, FileWarning, DollarSign, Package } from "lucide-react";
+import { Utensils, TrendingUp, Clock, FileWarning, DollarSign, Package } from "lucide-react";
 
 export default function StaffSummary() {
   const { data: summary, isLoading } = useGetStaffDailySummary({
@@ -35,7 +35,7 @@ export default function StaffSummary() {
         <Card className="glass-panel border-white/5">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Most Ordered Item</CardTitle>
-            <UtensilsCrossed className="h-4 w-4 text-secondary" />
+            <Utensils className="h-4 w-4 text-secondary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-white truncate">{summary.mostOrderedItem || "N/A"}</div>

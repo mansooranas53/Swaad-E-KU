@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { UtensilsCrossed } from "lucide-react";
+import { Utensils } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -85,7 +85,7 @@ export default function AuthPage() {
         <div className="z-10 text-center max-w-md p-8">
           <div className="flex items-center justify-center gap-3 mb-6">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-secondary shadow-lg glow-primary">
-              <UtensilsCrossed className="h-6 w-6 text-white" />
+              <Utensils className="h-6 w-6 text-white" />
             </div>
             <span className="text-3xl font-bold tracking-tight text-white">Canteen<span className="text-primary text-gradient">IQ</span></span>
           </div>
@@ -100,7 +100,7 @@ export default function AuthPage() {
         <div className="w-full max-w-md glass-panel p-8 rounded-2xl relative z-10">
           <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-secondary shadow-lg">
-              <UtensilsCrossed className="h-5 w-5 text-white" />
+              <Utensils className="h-5 w-5 text-white" />
             </div>
             <span className="text-2xl font-bold tracking-tight text-white">Canteen<span className="text-primary">IQ</span></span>
           </div>

@@ -3,7 +3,7 @@ import { useListOrders } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { UtensilsCrossed, Clock, CheckCircle2, ChevronRight, Activity } from "lucide-react";
+import { Utensils, Clock, CheckCircle2, ChevronRight, Activity } from "lucide-react";
 
 export default function StudentDashboard() {
   const { user } = useAuth();
@@ -29,7 +29,7 @@ export default function StudentDashboard() {
         </div>
         <Link href="/student/menu">
           <Button className="bg-primary hover:bg-primary/90 glow-primary rounded-full">
-            <UtensilsCrossed className="mr-2 h-4 w-4" />
+            <Utensils className="mr-2 h-4 w-4" />
             Order Now
           </Button>
         </Link>
@@ -77,7 +77,7 @@ export default function StudentDashboard() {
             <Link href="/student/menu" className="flex items-center justify-between p-4 rounded-xl bg-black/40 hover:bg-white/5 transition-colors border border-white/5">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-primary/20 text-primary">
-                  <UtensilsCrossed className="h-5 w-5" />
+                  <Utensils className="h-5 w-5" />
                 </div>
                 <div className="font-medium text-white">Browse Menu</div>
               </div>

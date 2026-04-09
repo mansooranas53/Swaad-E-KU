@@ -3,7 +3,7 @@ import { useAuth } from "@/lib/auth";
 import { Link, useLocation } from "wouter";
 import { 
   LayoutDashboard, 
-  UtensilsCrossed, 
+  Utensils, 
   ShoppingCart, 
   History, 
   MessageSquare,
@@ -25,7 +25,7 @@ interface NavItem {
 
 const studentNav: NavItem[] = [
   { name: "Dashboard", href: "/student", icon: LayoutDashboard },
-  { name: "Menu", href: "/student/menu", icon: UtensilsCrossed },
+  { name: "Menu", href: "/student/menu", icon: Utensils },
   { name: "Cart", href: "/student/cart", icon: ShoppingCart },
   { name: "Live Orders", href: "/student/orders", icon: Activity },
   { name: "History", href: "/student/history", icon: History },
@@ -35,13 +35,13 @@ const studentNav: NavItem[] = [
 const staffNav: NavItem[] = [
   { name: "Dashboard", href: "/staff", icon: LayoutDashboard },
   { name: "Live Queue", href: "/staff/queue", icon: ListOrdered },
-  { name: "Menu Stock", href: "/staff/menu", icon: UtensilsCrossed },
+  { name: "Menu Stock", href: "/staff/menu", icon: Utensils },
   { name: "Daily Summary", href: "/staff/summary", icon: BarChart3 },
 ];
 
 const adminNav: NavItem[] = [
   { name: "Overview", href: "/admin", icon: LayoutDashboard },
-  { name: "Menu Management", href: "/admin/menu", icon: UtensilsCrossed },
+  { name: "Menu Management", href: "/admin/menu", icon: Utensils },
   { name: "Users", href: "/admin/users", icon: Users },
   { name: "AI Predictions", href: "/admin/predictions", icon: BrainCircuit },
   { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
@@ -79,7 +79,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <div className="p-6">
           <div className="flex items-center gap-2 font-bold text-xl tracking-tight text-white">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-secondary">
-              <UtensilsCrossed className="h-4 w-4 text-white" />
+              <Utensils className="h-4 w-4 text-white" />
             </div>
             Canteen<span className="text-primary">IQ</span>
           </div>

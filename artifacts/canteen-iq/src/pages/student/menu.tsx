@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Search, Plus, ShoppingCart, Leaf, Flame } from "lucide-react";
+import { Search, Plus, ShoppingCart, Leaf, Flame, Utensils } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 
@@ -97,7 +97,7 @@ export default function StudentMenu() {
                   <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                    <UtensilsCrossed className="h-10 w-10 opacity-20" />
+                    <Utensils className="h-10 w-10 opacity-20" />
                   </div>
                 )}
                 
