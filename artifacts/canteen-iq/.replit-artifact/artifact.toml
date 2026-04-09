@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "CanteenIQ"
+version = "1.0.0"
+id = "artifacts/canteen-iq"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24826
+
+[services.development]
+run = "pnpm --filter @workspace/canteen-iq run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/canteen-iq", "run", "build" ]
+publicDir = "artifacts/canteen-iq/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24826"
+BASE_PATH = "/"

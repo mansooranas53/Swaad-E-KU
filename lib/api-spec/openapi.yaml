@@ -3,20 +3,36 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: CanteenIQ API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: menu
+    description: Menu item operations
+  - name: orders
+    description: Order operations
+  - name: predictions
+    description: AI demand prediction operations
+  - name: feedback
+    description: Feedback operations
+  - name: support
+    description: Support ticket operations
+  - name: analytics
+    description: Analytics and reporting
+  - name: users
+    description: User management
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +40,456 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user profile
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+        "401":
+          description: Unauthorized
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginBody"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+
+  /auth/signup:
+    post:
+      operationId: signup
+      tags: [auth]
+      summary: Sign up with email, password, name, and role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignupBody"
+      responses:
+        "201":
+          description: Signup successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Email already in use
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout current user
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /menu:
+    get:
+      operationId: listMenuItems
+      tags: [menu]
+      summary: List all menu items
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: available
+          in: query
+          schema:
+            type: boolean
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of menu items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MenuItem"
+    post:
+      operationId: createMenuItem
+      tags: [menu]
+      summary: Create a new menu item (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMenuItemBody"
+      responses:
+        "201":
+          description: Created menu item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuItem"
+
+  /menu/{id}:
+    get:
+      operationId: getMenuItem
+      tags: [menu]
+      summary: Get a single menu item
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Menu item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuItem"
+    put:
+      operationId: updateMenuItem
+      tags: [menu]
+      summary: Update a menu item (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMenuItemBody"
+      responses:
+        "200":
+          description: Updated menu item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuItem"
+    delete:
+      operationId: deleteMenuItem
+      tags: [menu]
+      summary: Delete a menu item (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /orders:
+    get:
+      operationId: listOrders
+      tags: [orders]
+      summary: List orders (students see own, staff/admin see all)
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, preparing, ready, picked_up, cancelled]
+        - name: date
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+    post:
+      operationId: createOrder
+      tags: [orders]
+      summary: Place a new order (student)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrderBody"
+      responses:
+        "201":
+          description: Created order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+
+  /orders/{id}:
+    get:
+      operationId: getOrder
+      tags: [orders]
+      summary: Get a single order with items
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Order detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderDetail"
+    patch:
+      operationId: updateOrderStatus
+      tags: [orders]
+      summary: Update order status (staff/admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateOrderStatusBody"
+      responses:
+        "200":
+          description: Updated order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+
+  /orders/{id}/cancel:
+    post:
+      operationId: cancelOrder
+      tags: [orders]
+      summary: Cancel an order (student - only pending orders)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Cancelled order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+
+  /predictions:
+    get:
+      operationId: listPredictions
+      tags: [predictions]
+      summary: Get AI demand predictions
+      parameters:
+        - name: date
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of predictions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Prediction"
+
+  /feedback:
+    get:
+      operationId: listFeedback
+      tags: [feedback]
+      summary: List all feedback (admin only)
+      responses:
+        "200":
+          description: Feedback list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Feedback"
+    post:
+      operationId: submitFeedback
+      tags: [feedback]
+      summary: Submit feedback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmitFeedbackBody"
+      responses:
+        "201":
+          description: Feedback submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Feedback"
+
+  /support:
+    get:
+      operationId: listSupportTickets
+      tags: [support]
+      summary: List support tickets (admin sees all, student sees own)
+      responses:
+        "200":
+          description: Tickets list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SupportTicket"
+    post:
+      operationId: createSupportTicket
+      tags: [support]
+      summary: Create a support ticket
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSupportTicketBody"
+      responses:
+        "201":
+          description: Ticket created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupportTicket"
+
+  /analytics/dashboard:
+    get:
+      operationId: getDashboardSummary
+      tags: [analytics]
+      summary: Get dashboard KPI summary (admin)
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /analytics/sales:
+    get:
+      operationId: getSalesAnalytics
+      tags: [analytics]
+      summary: Get daily/weekly sales analytics
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [daily, weekly, monthly]
+      responses:
+        "200":
+          description: Sales analytics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SalesAnalytics"
+
+  /analytics/peak-hours:
+    get:
+      operationId: getPeakHours
+      tags: [analytics]
+      summary: Get peak hour heatmap data
+      responses:
+        "200":
+          description: Peak hours data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PeakHourData"
+
+  /analytics/sustainability:
+    get:
+      operationId: getSustainabilityMetrics
+      tags: [analytics]
+      summary: Get sustainability dashboard metrics
+      responses:
+        "200":
+          description: Sustainability metrics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SustainabilityMetrics"
+
+  /analytics/staff-summary:
+    get:
+      operationId: getStaffDailySummary
+      tags: [analytics]
+      summary: Get staff end-of-day summary
+      responses:
+        "200":
+          description: Staff daily summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffDailySummary"
+
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List all users (admin only)
+      responses:
+        "200":
+          description: User list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Profile"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +500,533 @@ components:
       required:
         - status
 
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+
+    Profile:
+      type: object
+      properties:
+        id:
+          type: integer
+        fullName:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [student, staff, admin]
+        createdAt:
+          type: string
+      required:
+        - id
+        - fullName
+        - email
+        - role
+        - createdAt
+
+    LoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    SignupBody:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        fullName:
+          type: string
+        role:
+          type: string
+          enum: [student, staff, admin]
+      required:
+        - email
+        - password
+        - fullName
+        - role
+
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/Profile"
+        token:
+          type: string
+      required:
+        - user
+        - token
+
+    MenuItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+        imageUrl:
+          type: string
+        available:
+          type: boolean
+        popular:
+          type: boolean
+        vegType:
+          type: string
+          enum: [veg, nonveg, egg]
+        stock:
+          type: integer
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - category
+        - price
+        - available
+        - popular
+        - vegType
+        - stock
+        - createdAt
+
+    CreateMenuItemBody:
+      type: object
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+        imageUrl:
+          type: string
+        available:
+          type: boolean
+        popular:
+          type: boolean
+        vegType:
+          type: string
+          enum: [veg, nonveg, egg]
+        stock:
+          type: integer
+      required:
+        - name
+        - category
+        - price
+        - available
+        - popular
+        - vegType
+        - stock
+
+    UpdateMenuItemBody:
+      type: object
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+        imageUrl:
+          type: string
+        available:
+          type: boolean
+        popular:
+          type: boolean
+        vegType:
+          type: string
+          enum: [veg, nonveg, egg]
+        stock:
+          type: integer
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        tokenNumber:
+          type: integer
+        pickupTime:
+          type: string
+        status:
+          type: string
+          enum: [pending, preparing, ready, picked_up, cancelled]
+        totalAmount:
+          type: number
+        createdAt:
+          type: string
+        userFullName:
+          type: string
+        userEmail:
+          type: string
+      required:
+        - id
+        - userId
+        - tokenNumber
+        - pickupTime
+        - status
+        - totalAmount
+        - createdAt
+
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        orderId:
+          type: integer
+        menuItemId:
+          type: integer
+        quantity:
+          type: integer
+        price:
+          type: number
+        menuItemName:
+          type: string
+      required:
+        - id
+        - orderId
+        - menuItemId
+        - quantity
+        - price
+
+    OrderDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        tokenNumber:
+          type: integer
+        pickupTime:
+          type: string
+        status:
+          type: string
+          enum: [pending, preparing, ready, picked_up, cancelled]
+        totalAmount:
+          type: number
+        createdAt:
+          type: string
+        userFullName:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+      required:
+        - id
+        - userId
+        - tokenNumber
+        - pickupTime
+        - status
+        - totalAmount
+        - createdAt
+        - items
+
+    CreateOrderBody:
+      type: object
+      properties:
+        pickupTime:
+          type: string
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              menuItemId:
+                type: integer
+              quantity:
+                type: integer
+            required:
+              - menuItemId
+              - quantity
+      required:
+        - pickupTime
+        - items
+
+    UpdateOrderStatusBody:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [pending, preparing, ready, picked_up, cancelled]
+      required:
+        - status
+
+    Prediction:
+      type: object
+      properties:
+        id:
+          type: integer
+        itemName:
+          type: string
+        predictedQuantity:
+          type: integer
+        confidence:
+          type: number
+        wasteRisk:
+          type: string
+          enum: [low, medium, high]
+        yesterdaySold:
+          type: integer
+        trend:
+          type: string
+          enum: [up, down, stable]
+        date:
+          type: string
+      required:
+        - id
+        - itemName
+        - predictedQuantity
+        - confidence
+        - wasteRisk
+        - yesterdaySold
+        - trend
+        - date
+
+    Feedback:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        rating:
+          type: integer
+        message:
+          type: string
+        createdAt:
+          type: string
+        userFullName:
+          type: string
+      required:
+        - id
+        - userId
+        - rating
+        - message
+        - createdAt
+
+    SubmitFeedbackBody:
+      type: object
+      properties:
+        rating:
+          type: integer
+        message:
+          type: string
+      required:
+        - rating
+        - message
+
+    SupportTicket:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        issueType:
+          type: string
+        message:
+          type: string
+        status:
+          type: string
+        createdAt:
+          type: string
+        userFullName:
+          type: string
+      required:
+        - id
+        - userId
+        - issueType
+        - message
+        - status
+        - createdAt
+
+    CreateSupportTicketBody:
+      type: object
+      properties:
+        issueType:
+          type: string
+        message:
+          type: string
+      required:
+        - issueType
+        - message
+
+    DashboardSummary:
+      type: object
+      properties:
+        totalOrdersToday:
+          type: integer
+        revenueToday:
+          type: number
+        wasteEstimate:
+          type: number
+        topSellingItem:
+          type: string
+        peakHour:
+          type: string
+        pendingOrders:
+          type: integer
+        preparingOrders:
+          type: integer
+        readyOrders:
+          type: integer
+        completedOrders:
+          type: integer
+        cancelledOrders:
+          type: integer
+      required:
+        - totalOrdersToday
+        - revenueToday
+        - wasteEstimate
+        - topSellingItem
+        - peakHour
+        - pendingOrders
+        - preparingOrders
+        - readyOrders
+        - completedOrders
+        - cancelledOrders
+
+    SalesDataPoint:
+      type: object
+      properties:
+        label:
+          type: string
+        revenue:
+          type: number
+        orders:
+          type: integer
+      required:
+        - label
+        - revenue
+        - orders
+
+    CategorySales:
+      type: object
+      properties:
+        category:
+          type: string
+        revenue:
+          type: number
+        count:
+          type: integer
+      required:
+        - category
+        - revenue
+        - count
+
+    TopItem:
+      type: object
+      properties:
+        name:
+          type: string
+        count:
+          type: integer
+        revenue:
+          type: number
+      required:
+        - name
+        - count
+        - revenue
+
+    SalesAnalytics:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/SalesDataPoint"
+        categoryBreakdown:
+          type: array
+          items:
+            $ref: "#/components/schemas/CategorySales"
+        topItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/TopItem"
+      required:
+        - data
+        - categoryBreakdown
+        - topItems
+
+    PeakHourData:
+      type: object
+      properties:
+        hour:
+          type: string
+        day:
+          type: string
+        orders:
+          type: integer
+      required:
+        - hour
+        - day
+        - orders
+
+    SustainabilityMetrics:
+      type: object
+      properties:
+        wasteReducedPercent:
+          type: number
+        foodSavedKg:
+          type: number
+        sustainabilityScore:
+          type: number
+        carbonImpactKg:
+          type: number
+        improvedDemandPlanningPercent:
+          type: number
+        monthlyFoodSaved:
+          type: number
+      required:
+        - wasteReducedPercent
+        - foodSavedKg
+        - sustainabilityScore
+        - carbonImpactKg
+        - improvedDemandPlanningPercent
+        - monthlyFoodSaved
+
+    StaffDailySummary:
+      type: object
+      properties:
+        totalOrdersServed:
+          type: integer
+        mostOrderedItem:
+          type: string
+        cancelledOrders:
+          type: integer
+        pendingOrders:
+          type: integer
+        busiestHour:
+          type: string
+        totalRevenue:
+          type: number
+        quantitySold:
+          type: integer
+      required:
+        - totalOrdersServed
+        - mostOrderedItem
+        - cancelledOrders
+        - pendingOrders
+        - busiestHour
+        - totalRevenue
+        - quantitySold

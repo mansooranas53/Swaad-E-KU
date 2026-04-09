@@ -1,0 +1,674 @@
+Build a premium, modern, full-stack web application called CanteenIQ – Smart Canteen System using:
+
+React
+TypeScript
+Tailwind CSS
+shadcn/ui
+Framer Motion
+Recharts
+Lucide Icons
+React Router
+Supabase for:
+Authentication
+Database
+Role-based user data
+Realtime where possible
+
+This is a hackathon project and the app must feel like a real startup-grade SaaS product, not a student CRUD project.
+
+🎯 Project Goal
+
+Build a web platform for college canteens that solves:
+
+Food waste caused by unpredictable demand
+Long queues during breaks
+No live order tracking
+Manual staff operations
+No analytics for planning
+
+The platform should allow:
+
+Students to pre-order food
+Staff to manage queue in real-time
+Admin to monitor AI demand prediction, waste, and analytics
+✨ TOP PRIORITY: PREMIUM UI
+
+The app must look classy, premium, elegant, and demo-ready.
+
+Use a visual style inspired by:
+
+Stripe Dashboard
+Linear
+Vercel
+Notion AI
+Framer
+modern fintech / AI SaaS dashboards
+UI Style Requirements
+
+Use:
+
+dark-modern dashboard aesthetic
+glassmorphism where appropriate
+smooth hover effects
+premium cards
+rounded corners
+subtle gradients
+clean typography
+beautiful spacing
+polished dashboards
+elegant charts
+smooth transitions
+
+Avoid:
+
+bootstrap look
+cluttered admin templates
+generic food app design
+cheap gradients
+plain CRUD styling
+Brand Name
+CanteenIQ
+Tagline:
+
+Predict. Prepare. Pickup.
+
+🗄️ SUPABASE SETUP
+
+Use Supabase for:
+
+authentication
+database tables
+user role storage
+row-level data access where appropriate
+
+Implement:
+
+email/password authentication
+protected routes
+role-based dashboards after login
+🔐 AUTHENTICATION FLOW
+
+Create a beautiful premium auth page with:
+
+Login
+Sign Up
+College email
+Password
+Full name
+Role selector:
+Student
+Staff
+Admin
+Auth page UI should include:
+elegant split-screen or centered card
+premium heading:
+“Smart Canteen, Smarter Campus”
+modern glass card form
+subtle animated background
+polished inputs and buttons
+
+After signup/login:
+
+redirect based on role
+👥 USER ROLES
+
+There are 3 user roles:
+
+Student
+Staff
+Admin
+
+Each role must have a separate dashboard and permissions.
+
+🗃️ SUPABASE DATABASE TABLES
+
+Create and use these tables.
+
+1. profiles
+
+Stores user profile and role info.
+
+Fields:
+
+id (uuid, linked to auth.users)
+full_name
+email
+role (student, staff, admin)
+created_at
+2. menu_items
+
+Stores all canteen menu items.
+
+Fields:
+
+id
+name
+category
+price
+image_url
+available (boolean)
+popular (boolean)
+veg_type (veg, nonveg, egg)
+stock
+created_at
+3. orders
+
+Stores order-level info.
+
+Fields:
+
+id
+user_id
+token_number
+pickup_time
+status (pending, preparing, ready, picked_up, cancelled)
+total_amount
+created_at
+4. order_items
+
+Stores individual items inside each order.
+
+Fields:
+
+id
+order_id
+menu_item_id
+quantity
+price
+5. predictions
+
+Stores AI demand forecast mock data.
+
+Fields:
+
+id
+item_name
+predicted_quantity
+confidence
+waste_risk (low, medium, high)
+yesterday_sold
+trend (up, down, stable)
+date
+6. feedback
+
+Stores user feedback.
+
+Fields:
+
+id
+user_id
+rating
+message
+created_at
+7. support_tickets
+
+Stores support/help requests.
+
+Fields:
+
+id
+user_id
+issue_type
+message
+status
+created_at
+🔒 ROLE-BASED ACCESS RULES
+
+Implement role-based logic.
+
+Student can:
+view menu
+place order
+track own orders
+cancel own pending order
+view order history
+submit feedback/support
+Staff can:
+view all active orders
+update order statuses
+view queue
+see available items
+view daily summary
+Admin can:
+manage menu
+view all analytics
+view predictions
+manage users
+view feedback
+view waste dashboard
+🧭 APP ROUTES / PAGES
+👨‍🎓 STUDENT EXPERIENCE
+Student Dashboard
+
+Design this like a premium food-tech ordering app.
+
+Pages / Sections:
+1. Menu Page
+
+Show:
+
+today’s menu items
+item cards with:
+image
+name
+category
+price
+veg/non-veg badge
+available status
+popular tag
+search bar
+category filters
+favorite button
+2. Cart / Place Order
+
+Allow student to:
+
+add multiple items
+adjust quantity
+see cart summary
+select pickup time slot
+see total amount
+place order
+
+Generate:
+
+token number automatically
+order status = pending
+3. Order Confirmation
+
+Show:
+
+order success
+token number
+selected items
+total amount
+pickup time
+current status
+4. Live Token Tracker
+
+Create a beautiful live order tracker with statuses:
+
+Pending
+Preparing
+Ready
+Picked Up
+
+Use:
+
+animated stepper
+glowing active state
+status badges
+premium tracking UI
+
+Student should only see their own current order(s).
+
+5. Order History
+
+Show:
+
+all previous orders
+date/time
+token number
+amount
+status
+reorder button
+6. Favorites
+
+Allow students to mark and view favorite menu items.
+
+If needed, store favorites locally or create a simple favorites table.
+
+7. Support
+
+Support form with:
+
+issue type
+message
+submit button
+
+Store in support_tickets.
+
+🍳 STAFF EXPERIENCE
+Staff Dashboard
+
+Design like a live kitchen operations dashboard.
+
+1. Live Orders
+
+Show all active orders in queue.
+
+Each order card/table row should show:
+
+token number
+student name
+ordered items
+quantity
+pickup time
+current status
+2. Queue Management
+
+Display:
+
+who’s next
+pending count
+preparing count
+ready count
+pickup slot ordering
+3. Order Actions
+
+Allow staff to update status with buttons:
+
+Start Preparing
+Mark Ready
+Mark Picked Up
+
+Status flow:
+
+pending → preparing → ready → picked_up
+
+If order is cancelled, reflect it.
+
+4. Available Items
+
+Show:
+
+today’s available menu items
+stock levels
+out-of-stock items
+5. End of Day Summary
+
+Show:
+
+total orders served
+most ordered item
+leftover quantity (mock or derived)
+cancelled orders
+pending orders
+6. Reports
+
+Show:
+
+today’s completed orders
+quantity sold
+busiest time
+summary cards
+👨‍💼 ADMIN EXPERIENCE
+Admin Dashboard
+
+This should be the most premium screen in the app.
+
+Make it feel like:
+
+“AI-powered smart operations dashboard”
+1. Dashboard Overview
+
+Show KPI cards for:
+
+total orders today
+revenue today
+waste estimate
+top selling item
+peak hour
+2. Menu Management
+
+Full CRUD using Supabase.
+
+Admin should be able to:
+
+add item
+edit item
+delete item
+change price
+update stock
+toggle availability
+set popular badge
+assign category
+upload image URL
+3. User / Canteen Management
+
+Show:
+
+all students
+all staff
+user role table
+active user count
+4. AI Demand Prediction Dashboard
+
+Use predictions table.
+
+Display beautiful AI cards and widgets showing:
+
+predicted quantity per item
+confidence %
+yesterday’s sold count
+trend direction
+waste risk badge
+
+Example recommendation cards:
+
+“Prepare 45 plates of Rajma Rice”
+“Reduce Pasta quantity today”
+“Demand spike expected at 1 PM”
+
+This page should look highly polished and futuristic.
+
+5. Waste Alerts
+
+Show:
+
+high waste risk items
+low demand items
+over-preparation warnings
+
+Use premium warning cards.
+
+6. Revenue & Sales Analytics
+
+Use charts to show:
+
+daily sales
+weekly revenue
+top items
+category performance
+
+Use Recharts and make them look elegant.
+
+7. Peak Hour Heatmap
+
+Create a premium heatmap / time block chart showing:
+
+busiest order times
+demand spikes
+8. Sustainability Dashboard
+
+Very important.
+
+Show:
+
+estimated food waste reduced
+monthly food saved
+sustainability score
+carbon impact estimate
+
+Example cards:
+
+“23% food waste reduced this month”
+“18 kg food saved”
+“31% improved demand planning”
+9. Settings
+
+Create admin settings page for:
+
+canteen opening hours
+pickup slot intervals
+max orders per slot
+notification preferences
+
+Store locally or in a settings table if desired.
+
+10. Feedback
+
+Show all submitted:
+
+ratings
+complaints
+comments
+🤖 AI / ML EXPERIENCE
+
+This is a hackathon prototype, so AI can be simulated with mock or seeded prediction data.
+
+But make the UI feel like a real AI-powered system.
+
+Create sections/widgets named:
+
+Demand Forecast
+Waste Alerts
+Trending Items
+Preparation Suggestions
+
+Assume AI uses:
+
+day of week
+weather
+holidays
+past order trends
+item popularity
+time slot
+
+Display all of this elegantly in the UI.
+
+Use:
+
+violet / blue AI styling
+futuristic cards
+confidence chips
+AI badges
+smart assistant recommendation panels
+🔄 REALTIME BEHAVIOR
+
+Use Supabase Realtime where possible for:
+
+order status updates
+queue updates
+token tracker changes
+
+If realtime is hard, simulate it cleanly.
+
+When staff changes order status:
+
+student tracker should reflect update
+queue counts should refresh
+staff dashboard should update live-feeling
+📊 CHARTS & VISUALS
+
+Use Recharts for:
+
+line charts
+area charts
+donut charts
+bar charts
+trend widgets
+
+Use a premium analytics design language.
+
+Do NOT use boring or plain chart styling.
+
+🎨 LAYOUT / COMPONENT REQUIREMENTS
+
+Use:
+
+left sidebar navigation
+top header
+premium dashboard cards
+elegant tables
+responsive grid layouts
+filters / tabs / badges / modals / drawers
+
+Add:
+
+hover lift
+soft shadows
+blur effects where useful
+subtle motion
+loading shimmer
+smooth transitions
+🪄 MOTION / MICROINTERACTIONS
+
+Use Framer Motion for:
+
+card hover animations
+page transitions
+status changes
+tracker progression
+sidebar interactions
+smooth entrance animations
+
+Keep motion:
+
+subtle
+premium
+startup-quality
+📦 SEED MOCK DATA
+
+Seed realistic data for:
+
+sample students
+sample staff
+sample menu items
+sample orders
+sample AI predictions
+sample analytics
+sample feedback
+
+Include Indian canteen food items like:
+
+Rajma Rice
+Samosa
+Pasta
+Sandwich
+Poha
+Maggi
+Cold Coffee
+Paneer Roll
+📱 RESPONSIVENESS
+
+Make the app fully responsive for:
+
+desktop
+tablet
+mobile
+
+The mobile version should still look polished and premium.
+
+🚫 DO NOT
+
+Do NOT make the app look like:
+
+a generic dashboard template
+a bootstrap CRUD panel
+a food delivery clone
+a plain hackathon prototype
+
+Make it feel like:
+
+“A premium AI-powered smart campus product.”
+🏁 FINAL OUTPUT
+
+Generate a complete, polished, role-based Smart Canteen web app scaffold with:
+
+Supabase auth
+Supabase database integration
+role-based routing
+protected pages
+premium dashboards
+seeded mock data
+elegant UI
+realistic analytics
+AI prediction dashboard
+live order tracking
+beautiful demo-ready experience
+Final instruction
+
+Prioritize:
+
+Premium UI, smooth UX, role-based flow, and hackathon demo quality above everything else.
