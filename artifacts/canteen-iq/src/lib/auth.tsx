@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!isLoading && !user) {
       const currentPath = window.location.pathname;
-      if (currentPath !== "/auth" && currentPath !== "/") {
+      if (!currentPath.endsWith("/auth")) {
         setLocation("/auth");
       }
     } else if (!isLoading && user) {
