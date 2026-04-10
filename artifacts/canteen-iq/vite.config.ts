@@ -28,6 +28,9 @@ if (!basePath) {
 
 export default defineConfig({
   base: basePath,
+  define: {
+    "import.meta.env.VITE_RAZORPAY_KEY_ID": JSON.stringify(process.env.RAZORPAY_KEY_ID || ""),
+  },
   plugins: [
     react(),
     tailwindcss(),

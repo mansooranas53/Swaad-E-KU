@@ -8,6 +8,7 @@ import feedbackRouter from "./feedback";
 import supportRouter from "./support";
 import usersRouter from "./users";
 import analyticsRouter from "./analytics";
+import paymentsRouter from "./payments";
 
 const router: IRouter = Router();
 
@@ -20,5 +21,6 @@ router.use(feedbackRouter);
 router.use(supportRouter);
 router.use(usersRouter);
 router.use(analyticsRouter);
+router.use(paymentsRouter);
 
 export default router;

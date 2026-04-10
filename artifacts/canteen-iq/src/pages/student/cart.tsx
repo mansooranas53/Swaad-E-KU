@@ -1,44 +1,69 @@
 import { useState } from "react";
 import { useCart } from "@/lib/cart";
 import { useCreateOrder } from "@workspace/api-client-react";
+import { useAuth } from "@/lib/auth";
+import { openRazorpayCheckout } from "@/lib/razorpay";
 import { useToast } from "@/hooks/use-toast";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Minus, Plus, Trash2, ArrowRight, ShoppingBag } from "lucide-react";
+import { Minus, Plus, Trash2, ArrowRight, ShoppingBag, IndianRupee, CreditCard } from "lucide-react";
 
 export default function StudentCart() {
   const { items, updateQuantity, removeFromCart, total, clearCart } = useCart();
   const [pickupTime, setPickupTime] = useState("");
+  const [paying, setPaying] = useState(false);
   const createOrder = useCreateOrder();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     if (!pickupTime) {
       toast({ title: "Select Pickup Time", description: "Please select a time to pick up your order.", variant: "destructive" });
       return;
     }
-    
-    createOrder.mutate(
-      { 
-        data: {
-          pickupTime,
-          items: items.map(item => ({ menuItemId: item.id, quantity: item.quantity }))
-        }
-      },
-      {
-        onSuccess: (data) => {
-          clearCart();
-          toast({ title: "Order Placed!", description: `Token #${data.tokenNumber} — track it in Live Orders.` });
-          setLocation("/student/orders");
+    if (items.length === 0) return;
+
+    setPaying(true);
+
+    try {
+      await openRazorpayCheckout({
+        amount: total,
+        userName: user?.fullName,
+        userEmail: user?.email,
+        onDismiss: () => {
+          setPaying(false);
+          toast({ title: "Payment Cancelled", description: "You cancelled the payment.", variant: "destructive" });
         },
-        onError: () => {
-          toast({ title: "Order Failed", description: "Could not place your order.", variant: "destructive" });
-        }
-      }
-    );
+        onSuccess: (paymentId, rzpOrderId, signature) => {
+          createOrder.mutate(
+            {
+              data: {
+                pickupTime,
+                items: items.map(item => ({ menuItemId: item.id, quantity: item.quantity })),
+              }
+            },
+            {
+              onSuccess: (data) => {
+                clearCart();
+                setPaying(false);
+                toast({ title: "Order Placed! 🎉", description: `Token #${data.tokenNumber} — Payment ID: ${paymentId.slice(-8)}` });
+                setLocation("/student/orders");
+              },
+              onError: () => {
+                setPaying(false);
+                toast({ title: "Order Failed", description: "Payment succeeded but order creation failed. Contact support.", variant: "destructive" });
+              }
+            }
+          );
+        },
+      });
+    } catch (err: any) {
+      setPaying(false);
+      toast({ title: "Payment Error", description: err.message || "Could not initiate payment.", variant: "destructive" });
+    }
   };
 
   const generateTimeSlots = () => {
@@ -79,7 +104,7 @@ export default function StudentCart() {
     <div className="space-y-8 animate-in fade-in duration-500 max-w-4xl mx-auto pb-20">
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">Your Cart</h1>
-        <p className="text-muted-foreground">Review your items and choose a pickup time.</p>
+        <p className="text-muted-foreground">Review your items, choose a pickup time, then pay.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -98,15 +123,17 @@ export default function StudentCart() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-foreground truncate">{item.name}</h3>
-                  <p className="text-sm text-primary font-medium">₹{item.price.toFixed(2)}</p>
+                  <p className="text-sm text-primary font-medium flex items-center gap-0.5">
+                    <IndianRupee className="h-3 w-3" />{item.price.toFixed(2)}
+                  </p>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="flex items-center bg-muted/60 rounded-lg border border-border">
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-foreground hover:bg-muted hover:text-foreground" onClick={() => updateQuantity(item.id, item.quantity - 1)}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-foreground hover:bg-muted" onClick={() => updateQuantity(item.id, item.quantity - 1)}>
                       <Minus className="h-3 w-3" />
                     </Button>
                     <span className="w-6 text-center text-sm font-medium text-foreground">{item.quantity}</span>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-foreground hover:bg-muted hover:text-foreground" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-foreground hover:bg-muted" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
                       <Plus className="h-3 w-3" />
                     </Button>
                   </div>
@@ -142,26 +169,41 @@ export default function StudentCart() {
               </div>
 
               <div className="space-y-3 pt-4 border-t border-border">
-                <div className="flex justify-between text-muted-foreground text-sm">
-                  <span>Subtotal</span>
-                  <span>₹{total.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-foreground font-bold text-lg">
+                {items.map(item => (
+                  <div key={item.id} className="flex justify-between text-sm text-muted-foreground">
+                    <span>{item.name} ×{item.quantity}</span>
+                    <span className="flex items-center gap-0.5"><IndianRupee className="h-3 w-3" />{(item.price * item.quantity).toFixed(2)}</span>
+                  </div>
+                ))}
+                <div className="flex justify-between text-foreground font-bold text-lg pt-2 border-t border-border">
                   <span>Total</span>
-                  <span className="text-primary">₹{total.toFixed(2)}</span>
+                  <span className="text-primary flex items-center gap-0.5">
+                    <IndianRupee className="h-4 w-4" />{total.toFixed(2)}
+                  </span>
                 </div>
+              </div>
+
+              <div className="rounded-lg bg-primary/5 border border-primary/20 p-3 text-xs text-muted-foreground flex items-start gap-2">
+                <CreditCard className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                <span>Secure payment via Razorpay. UPI, Cards, Net Banking & more accepted.</span>
               </div>
             </CardContent>
             <CardFooter>
               <Button 
                 className="w-full bg-primary hover:bg-primary/90 text-white shadow-lg glow-primary" 
                 size="lg"
-                disabled={createOrder.isPending || !pickupTime}
+                disabled={paying || !pickupTime}
                 onClick={handlePlaceOrder}
               >
-                {createOrder.isPending ? "Placing Order..." : (
+                {paying ? (
+                  <span className="flex items-center gap-2">
+                    <span className="h-4 w-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    Processing...
+                  </span>
+                ) : (
                   <>
-                    Place Order <ArrowRight className="ml-2 h-4 w-4" />
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    Pay ₹{total.toFixed(2)} & Order <ArrowRight className="ml-2 h-4 w-4" />
                   </>
                 )}
               </Button>
