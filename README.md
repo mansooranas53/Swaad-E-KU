@@ -72,7 +72,7 @@ A smart platform that integrates:
 
 ## 📸 Screenshots  
 
-### 🧑‍💼 Dashboard / Main UI  
+### 🧑‍💼 Student Dashboard 
 ![Dashboard](Screenshot%20(754).png)
 
 ---
@@ -88,17 +88,7 @@ A smart platform that integrates:
 ---
 
 ### 🧑‍💼 Admin Panel  
-![Admin](Screenshot%20(757).png)
-
----
-
-### 🤖 AI Dashboard  
-![AI](Screenshot%20(758).png)
-
----
-
-### 🌱 Waste Dashboard  
-![Waste](Screenshot%20(759).png)
+![Admin](Screenshot%20(759).png)
 
 ---
 
