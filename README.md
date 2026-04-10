@@ -95,7 +95,7 @@ A smart platform that integrates:
 ## ⚙️ Installation  
 
 ```bash
-git clone https://github.com/your-username/smart-canteen.git
+git clone https://github.com/mansooranas53/Swaad-E-KU
 cd smart-canteen
 npm install
 npm run server
