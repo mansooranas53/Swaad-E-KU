@@ -14,6 +14,7 @@ const CATEGORIES = ["All", "Breakfast", "Lunch", "Snacks", "Beverages"];
 export default function StudentMenu() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+  const [vegOnly, setVegOnly] = useState(false);
   
   const { data: menuItems = [], isLoading } = useListMenuItems({
     query: {
@@ -29,6 +30,7 @@ export default function StudentMenu() {
   const filteredItems = menuItems.filter(item => {
     if (category !== "All" && item.category !== category) return false;
     if (search && !item.name.toLowerCase().includes(search.toLowerCase())) return false;
+    if (vegOnly && item.vegType !== "veg") return false;
     return true;
   });
 
@@ -44,7 +46,7 @@ export default function StudentMenu() {
     <div className="space-y-8 animate-in fade-in duration-500 pb-20">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Menu</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">Menu</h1>
           <p className="text-muted-foreground">Order ahead and skip the line.</p>
         </div>
         
@@ -58,22 +60,35 @@ export default function StudentMenu() {
         )}
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex flex-col md:flex-row gap-4 flex-wrap">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input 
             placeholder="Search for food..." 
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 bg-card border-white/10"
+            className="pl-10 bg-card border-border"
           />
         </div>
+
+        <Button
+          variant={vegOnly ? "default" : "outline"}
+          className={`rounded-full shrink-0 flex items-center gap-2 ${vegOnly ? "bg-green-600 hover:bg-green-700 text-white border-none" : "border-border hover:bg-muted"}`}
+          onClick={() => setVegOnly(v => !v)}
+        >
+          <div className={`h-3.5 w-3.5 rounded border-2 flex items-center justify-center ${vegOnly ? "border-white" : "border-green-600"}`}>
+            <div className={`h-1.5 w-1.5 rounded-full ${vegOnly ? "bg-white" : "bg-green-600"}`} />
+          </div>
+          <Leaf className="h-3.5 w-3.5" />
+          Veg Only
+        </Button>
+
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
           {CATEGORIES.map(cat => (
             <Button 
               key={cat}
               variant={category === cat ? "default" : "outline"}
-              className={`rounded-full shrink-0 ${category === cat ? 'bg-white text-black hover:bg-white/90' : 'bg-transparent border-white/10 hover:bg-white/5'}`}
+              className={`rounded-full shrink-0 ${category === cat ? 'bg-primary text-white hover:bg-primary/90' : 'bg-transparent border-border hover:bg-muted'}`}
               onClick={() => setCategory(cat)}
             >
               {cat}
@@ -88,11 +103,16 @@ export default function StudentMenu() {
             <div key={i} className="h-[300px] rounded-2xl bg-card animate-pulse" />
           ))}
         </div>
+      ) : filteredItems.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-[30vh] text-center">
+          <Utensils className="h-12 w-12 text-muted-foreground opacity-30 mb-4" />
+          <p className="text-muted-foreground">No items found{vegOnly ? " — try turning off Veg Only" : ""}.</p>
+        </div>
       ) : (
         <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredItems.map(item => (
             <Card key={item.id} className="glass-panel overflow-hidden flex flex-col group">
-              <div className="h-48 relative bg-black/50 w-full overflow-hidden">
+              <div className="h-48 relative bg-muted w-full overflow-hidden">
                 {item.imageUrl ? (
                   <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                 ) : (
@@ -136,12 +156,12 @@ export default function StudentMenu() {
               
               <CardContent className="p-5 flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-bold text-lg text-white leading-tight">{item.name}</h3>
-                  <span className="font-bold text-primary ml-2">${item.price.toFixed(2)}</span>
+                  <h3 className="font-bold text-lg text-foreground leading-tight">{item.name}</h3>
+                  <span className="font-bold text-primary ml-2">₹{item.price.toFixed(2)}</span>
                 </div>
                 <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{item.category}</p>
                 <div className="mt-auto">
-                  <Badge variant="outline" className="bg-white/5 border-white/10 text-white/70">
+                  <Badge variant="outline" className="bg-muted/50 border-border text-muted-foreground">
                     {item.stock} left today
                   </Badge>
                 </div>
@@ -149,11 +169,11 @@ export default function StudentMenu() {
               
               <CardFooter className="p-5 pt-0">
                 <Button 
-                  className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/10" 
+                  className="w-full bg-muted/60 hover:bg-muted text-foreground border border-border" 
                   disabled={!item.available}
                   onClick={() => handleAddToCart(item)}
                 >
-                  <Plus className="h-4 w-4 mr-2" /> Add
+                  <Plus className="h-4 w-4 mr-2" /> Add to Cart
                 </Button>
               </CardFooter>
             </Card>

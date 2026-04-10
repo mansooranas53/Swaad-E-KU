@@ -66,7 +66,7 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* DARK MODE ONLY APP */
+/* DEFAULT DARK THEME */
 :root, .dark {
   --background: 0 0% 4%;
   --foreground: 0 0% 98%;
@@ -140,6 +140,76 @@
   --shadow-lg: 0px 2px 0px 0px rgba(0,0,0,0.5), 0px 4px 6px -1px rgba(0,0,0,0.5);
   --shadow-xl: 0px 2px 0px 0px rgba(0,0,0,0.5), 0px 8px 10px -1px rgba(0,0,0,0.5);
   --shadow-2xl: 0px 2px 0px 0px rgba(0,0,0,0.5);
+}
+
+/* LIGHT THEME OVERRIDE */
+:root[data-theme="light"] {
+  --background: 0 0% 97%;
+  --foreground: 0 0% 10%;
+
+  --border: 0 0% 85%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 10%;
+  --card-border: 0 0% 85%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 10%;
+  --popover-border: 0 0% 85%;
+
+  --primary: 252 83% 52%;
+  --primary-foreground: 0 0% 100%;
+  --primary-border: 252 83% 52%;
+
+  --secondary: 217 91% 54%;
+  --secondary-foreground: 0 0% 100%;
+  --secondary-border: 217 91% 54%;
+
+  --muted: 0 0% 92%;
+  --muted-foreground: 0 0% 45%;
+  --muted-border: 0 0% 85%;
+
+  --accent: 252 83% 52%;
+  --accent-foreground: 0 0% 100%;
+  --accent-border: 252 83% 52%;
+
+  --destructive: 0 84% 55%;
+  --destructive-foreground: 0 0% 100%;
+  --destructive-border: 0 84% 55%;
+
+  --input: 0 0% 88%;
+  --ring: 252 83% 52%;
+
+  --chart-1: 252 83% 52%;
+  --chart-2: 217 91% 54%;
+  --chart-3: 142 71% 40%;
+  --chart-4: 43 96% 50%;
+  --chart-5: 0 84% 55%;
+
+  --sidebar: 0 0% 100%;
+  --sidebar-foreground: 0 0% 10%;
+  --sidebar-border: 0 0% 88%;
+  --sidebar-primary: 252 83% 52%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-primary-border: 252 83% 52%;
+  --sidebar-accent: 0 0% 94%;
+  --sidebar-accent-foreground: 0 0% 10%;
+  --sidebar-accent-border: 0 0% 88%;
+  --sidebar-ring: 252 83% 52%;
+
+  --button-outline: rgba(0,0,0, .12);
+  --badge-outline: rgba(0,0,0, .06);
+  --elevate-1: rgba(0,0,0, .03);
+  --elevate-2: rgba(0,0,0, .06);
+
+  --shadow-2xs: 0px 2px 0px 0px rgba(0,0,0,0.08);
+  --shadow-xs: 0px 2px 0px 0px rgba(0,0,0,0.08);
+  --shadow-sm: 0px 2px 0px 0px rgba(0,0,0,0.08), 0px 1px 2px -1px rgba(0,0,0,0.08);
+  --shadow: 0px 2px 0px 0px rgba(0,0,0,0.08), 0px 1px 2px -1px rgba(0,0,0,0.08);
+  --shadow-md: 0px 2px 0px 0px rgba(0,0,0,0.08), 0px 2px 4px -1px rgba(0,0,0,0.08);
+  --shadow-lg: 0px 2px 0px 0px rgba(0,0,0,0.08), 0px 4px 6px -1px rgba(0,0,0,0.08);
+  --shadow-xl: 0px 2px 0px 0px rgba(0,0,0,0.08), 0px 8px 10px -1px rgba(0,0,0,0.08);
+  --shadow-2xl: 0px 2px 0px 0px rgba(0,0,0,0.08);
 }
 
 @layer base {

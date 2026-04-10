@@ -1,5 +1,6 @@
 import React from "react";
 import { useAuth } from "@/lib/auth";
+import { useTheme } from "@/lib/theme";
 import { Link, useLocation } from "wouter";
 import { 
   LayoutDashboard, 
@@ -13,7 +14,9 @@ import {
   Users,
   BrainCircuit,
   Leaf,
-  Activity
+  Activity,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -53,6 +56,7 @@ const adminNav: NavItem[] = [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const { user, isLoading, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [location] = useLocation();
 
   if (isLoading) {
@@ -75,14 +79,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-screen w-full bg-background text-foreground overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-64 flex flex-col border-r border-white/5 bg-card/40 backdrop-blur-xl shrink-0">
-        <div className="p-6">
-          <div className="flex items-center gap-2 font-bold text-xl tracking-tight text-white">
+      <aside className="w-64 flex flex-col border-r border-border bg-card/40 backdrop-blur-xl shrink-0">
+        <div className="p-6 flex items-center justify-between">
+          <div className="flex items-center gap-2 font-bold text-xl tracking-tight text-foreground">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-secondary">
               <Utensils className="h-4 w-4 text-white" />
             </div>
-            Canteen<span className="text-primary">IQ</span>
+            <span>Swaad<span className="text-primary">-E-KU</span></span>
           </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-muted-foreground hover:text-foreground shrink-0"
+            onClick={toggleTheme}
+            title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
         </div>
 
         <nav className="flex-1 space-y-1 px-3 py-4 overflow-y-auto">
@@ -95,7 +108,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all ${
                   isActive 
                     ? "bg-primary/10 text-primary border border-primary/20" 
-                    : "text-muted-foreground hover:bg-white/5 hover:text-white"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 }`}
               >
                 <item.icon className={`h-4 w-4 ${isActive ? "text-primary" : "text-muted-foreground"}`} />
@@ -105,13 +118,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
           })}
         </nav>
 
-        <div className="p-4 mt-auto border-t border-white/5">
-          <div className="flex items-center gap-3 rounded-lg bg-white/5 p-3">
+        <div className="p-4 mt-auto border-t border-border">
+          <div className="flex items-center gap-3 rounded-lg bg-muted/50 p-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary font-semibold">
               {user.fullName.charAt(0).toUpperCase()}
             </div>
             <div className="flex flex-col overflow-hidden">
-              <span className="truncate text-sm font-medium text-white">{user.fullName}</span>
+              <span className="truncate text-sm font-medium text-foreground">{user.fullName}</span>
               <span className="truncate text-xs text-muted-foreground capitalize">{user.role}</span>
             </div>
             <Button variant="ghost" size="icon" className="ml-auto text-muted-foreground hover:text-destructive shrink-0" onClick={logout}>
